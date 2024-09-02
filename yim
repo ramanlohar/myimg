@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take a Picture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #camera {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            display: block;
+        }
+        #capture-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #photo {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Take a Picture</h1>
+    
+    <!-- Video Element to show Camera Stream -->
+    <video id="camera" autoplay playsinline></video>
+    
+    <!-- Capture Button -->
+    <button id="capture-btn">Capture Photo</button>
+    
+    <!-- Image Element to display the captured photo -->
+    <img id="photo" alt="Captured Photo" />
+
+    <script>
+        const cameraElement = document.getElementById('camera');
+        const captureButton = document.getElementById('capture-btn');
+        const photoElement = document.getElementById('photo');
+
+        // Access the device camera and stream to video element
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraElement.srcObject = stream;
+            } catch (error) {
+                console.error("Error accessing camera: ", error);
+            }
+        }
+
+        // Capture the photo and display it in the img element
+        function capturePhoto() {
+            const canvas = document.createElement('canvas');
+            canvas.width = cameraElement.videoWidth;
+            canvas.height = cameraElement.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(cameraElement, 0, 0, canvas.width, canvas.height);
+            const imageDataURL = canvas.toDataURL('image/png');
+            photoElement.src = imageDataURL;
+        }
+
+        // Start the camera when the page loads
+        window.addEventListener('load', startCamera);
+
+        // Capture the photo when the button is clicked
+        captureButton.addEventListener('click', capturePhoto);
+    </script>
+</body>
+</html>
