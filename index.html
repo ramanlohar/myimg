@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .info-box {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Device Information</h1>
+
+    <div class="info-box" id="location">
+        <h3>Location:</h3>
+        <p>Latitude: <span id="latitude">Loading...</span></p>
+        <p>Longitude: <span id="longitude">Loading...</span></p>
+    </div>
+
+    <div class="info-box" id="battery">
+        <h3>Battery:</h3>
+        <p>Battery Level: <span id="batteryLevel">Loading...</span></p>
+        <p>Charging: <span id="batteryCharging">Loading...</span></p>
+    </div>
+
+    <div class="info-box" id="device-info">
+        <h3>Device Info:</h3>
+        <p>Device Name: <span id="deviceName">Loading...</span></p>
+        <p>IP Address: <span id="ipAddress">Loading...</span></p>
+        <p>WiFi Connection: <span id="wifiConnection">Loading...</span></p>
+    </div>
+
+    <script>
+        // Location API
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    document.getElementById('latitude').textContent = position.coords.latitude;
+                    document.getElementById('longitude').textContent = position.coords.longitude;
+                }, error => {
+                    document.getElementById('latitude').textContent = "Unavailable";
+                    document.getElementById('longitude').textContent = "Unavailable";
+                });
+            } else {
+                document.getElementById('latitude').textContent = "Geolocation not supported";
+                document.getElementById('longitude').textContent = "Geolocation not supported";
+            }
+        }
+
+        // Battery API
+        function getBatteryInfo() {
+            if (navigator.getBattery) {
+                navigator.getBattery().then(function(battery) {
+                    document.getElementById('batteryLevel').textContent = battery.level * 100 + '%';
+                    document.getElementById('batteryCharging').textContent = battery.charging ? "Yes" : "No";
+
+                    battery.addEventListener('levelchange', () => {
+                        document.getElementById('batteryLevel').textContent = battery.level * 100 + '%';
+                    });
+                    battery.addEventListener('chargingchange', () => {
+                        document.getElementById('batteryCharging').textContent = battery.charging ? "Yes" : "No";
+                    });
+                });
+            } else {
+                document.getElementById('batteryLevel').textContent = "Battery API not supported";
+                document.getElementById('batteryCharging').textContent = "Battery API not supported";
+            }
+        }
+
+        // Fetch IP Address
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                document.getElementById('ipAddress').textContent = data.ip;
+            } catch (error) {
+                document.getElementById('ipAddress').textContent = "Unable to fetch IP";
+            }
+        }
+
+        // WiFi Connection Status
+        function getConnectionInfo() {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (connection) {
+                const type = connection.type;
+                const effectiveType = connection.effectiveType;
+                document.getElementById('wifiConnection').textContent = type === 'wifi' ? 'Connected' : 'Not Connected';
+            } else {
+                document.getElementById('wifiConnection').textContent = "Connection info not supported";
+            }
+        }
+
+        // Device Name (User-Agent)
+        function getDeviceName() {
+            const userAgent = navigator.userAgent;
+            document.getElementById('deviceName').textContent = userAgent;
+        }
+
+        // Initialize all functions
+        getLocation();
+        getBatteryInfo();
+        getIPAddress();
+        getConnectionInfo();
+        getDeviceName();
+    </script>
+</body>
+</html>
