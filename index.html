@@ -26,6 +26,7 @@
 <body>
     <h1>Device Information</h1>
 
+    <!-- Existing Information Boxes -->
     <div class="info-box" id="location">
         <h3>Location:</h3>
         <p>Latitude: <span id="latitude">Loading...</span></p>
@@ -43,6 +44,33 @@
         <p>Device Name: <span id="deviceName">Loading...</span></p>
         <p>IP Address: <span id="ipAddress">Loading...</span></p>
         <p>WiFi Connection: <span id="wifiConnection">Loading...</span></p>
+    </div>
+
+    <!-- New Information Boxes -->
+    <div class="info-box" id="theme-mode">
+        <h3>Theme Mode:</h3>
+        <p>Current Theme: <span id="themeMode">Loading...</span></p>
+    </div>
+
+    <div class="info-box" id="installed-apps">
+        <h3>Installed Apps:</h3>
+        <p>Installed Apps: <span id="installedApps">Unavailable in Browser</span></p>
+    </div>
+
+    <div class="info-box" id="wifi-ssid">
+        <h3>WiFi SSID and Signal Strength:</h3>
+        <p>SSID: <span id="wifiSSID">Unavailable in Browser</span></p>
+        <p>Signal Strength: <span id="wifiSignalStrength">Unavailable in Browser</span></p>
+    </div>
+
+    <div class="info-box" id="logged-in-account">
+        <h3>Logged-in Account ID:</h3>
+        <p>Account ID: <span id="loggedInAccount">Unavailable in Browser</span></p>
+    </div>
+
+    <div class="info-box" id="search-history">
+        <h3>Search History:</h3>
+        <p>Search History: <span id="searchHistory">Unavailable in Browser</span></p>
     </div>
 
     <script>
@@ -98,7 +126,6 @@
             const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
             if (connection) {
                 const type = connection.type;
-                const effectiveType = connection.effectiveType;
                 document.getElementById('wifiConnection').textContent = type === 'wifi' ? 'Connected' : 'Not Connected';
             } else {
                 document.getElementById('wifiConnection').textContent = "Connection info not supported";
@@ -111,12 +138,19 @@
             document.getElementById('deviceName').textContent = userAgent;
         }
 
+        // Theme Mode Detection
+        function getThemeMode() {
+            const themeMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark Mode' : 'Light Mode';
+            document.getElementById('themeMode').textContent = themeMode;
+        }
+
         // Initialize all functions
         getLocation();
         getBatteryInfo();
         getIPAddress();
         getConnectionInfo();
         getDeviceName();
+        getThemeMode();
     </script>
 </body>
 </html>
